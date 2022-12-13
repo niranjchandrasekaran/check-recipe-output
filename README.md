@@ -8,7 +8,7 @@ Clone the repo outside the data repo
 git clone git@github.com:niranjchandrasekaran/check-recipe-output.git
 ```
 
-## Install the environment
+## Installing the environment
 
 Download and install [miniconda](https://docs.conda.io/en/latest/miniconda.html) and then install the required packages
 
