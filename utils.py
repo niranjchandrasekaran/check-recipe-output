@@ -49,6 +49,11 @@ def process_steps(pipeline):
             parameters = pd.concat([parameters, pd.DataFrame({"step": "feature_select_gct", "suffix": "_negcon", "level": f'_{pipeline["feature_select"]["level"]}'}, index=[0])])
         else:
             parameters = pd.concat([parameters, pd.DataFrame({"step": "feature_select", "suffix": "_negcon", "level": f'_{pipeline["feature_select"]["level"]}'}, index=[0])])
+    if "quality_control" in pipeline and pipeline["quality_control"]["perform"]:
+        if pipeline["quality_control"]["summary"]["perform"]:
+            parameters = pd.concat([parameters, pd.DataFrame({"step": "qc_summary", "suffix": "", "level": ""}, index=[0])])
+        if pipeline["quality_control"]["heatmap"]["perform"]:
+            parameters = pd.concat([parameters, pd.DataFrame({"step": "qc_heatmap", "suffix": "", "level": ""}, index=[0])])
     
     return parameters.reset_index(drop=True)
 
@@ -56,16 +61,23 @@ def generate_filepath(data_repo_location, batch, plate, parameters):
     step = parameters["step"]
     suffix = parameters["suffix"]
     level = parameters["level"]
+    filepath = []
 
     if step == "aggregate":
-        filepath = pathlib.Path(data_repo_location, "profiles", batch, plate, f'{plate}.csv.gz')
+        filepath.append(pathlib.Path(data_repo_location, "profiles", batch, plate, f'{plate}.csv.gz'))
     elif step == "annotate":
-        filepath = pathlib.Path(data_repo_location, "profiles", batch, plate, f'{plate}_augmented.csv.gz')
+        filepath.append(pathlib.Path(data_repo_location, "profiles", batch, plate, f'{plate}_augmented.csv.gz'))
     elif step == "normalize":
-        filepath = pathlib.Path(data_repo_location, "profiles", batch, plate, f'{plate}_normalized{suffix}.csv.gz')
+        filepath.append(pathlib.Path(data_repo_location, "profiles", batch, plate, f'{plate}_normalized{suffix}.csv.gz'))
     elif step == "feature_select":
-        filepath = pathlib.Path(data_repo_location, "profiles", batch, plate, f'{plate}_normalized_feature_select{suffix}{level}.csv.gz')
+        filepath.append(pathlib.Path(data_repo_location, "profiles", batch, plate, f'{plate}_normalized_feature_select{suffix}{level}.csv.gz'))
     elif step == "feature_select_gct":
-        filepath = pathlib.Path(data_repo_location, "gct", batch, f'{plate}_normalized_feature_select{suffix}{level}.csv.gz')
+        filepath.append(pathlib.Path(data_repo_location, "gct", batch, f'{plate}_normalized_feature_select{suffix}{level}.csv.gz'))
+    elif step == "qc_summary":
+        filepath.append(pathlib.Path(data_repo_location, "quality_control", "summary", 'summary.tsv'))
+    elif step == "qc_heatmap":
+        filepath.append(pathlib.Path(data_repo_location, "quality_control", "heatmap", batch, plate, f'{plate}_cell_count.png'))
+        filepath.append(pathlib.Path(data_repo_location, "quality_control", "heatmap", batch, plate, f'{plate}_correlation.png'))
+        filepath.append(pathlib.Path(data_repo_location, "quality_control", "heatmap", batch, plate, f'{plate}_position_effect.png'))
     
     return filepath

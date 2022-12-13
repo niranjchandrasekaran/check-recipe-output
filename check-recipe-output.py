@@ -23,14 +23,14 @@ for config_file_path in config_file_paths:
     for batch in pipeline_config:
         for plate in pipeline_config[batch]:
             for index, step_parameters in parameters.iterrows():
-                filepath = utils.generate_filepath(data_location, batch, plate, step_parameters)
-
-                if not filepath.exists() or os.path.getsize(filepath) == 0:
-                    missing_files = pd.concat([missing_files, pd.DataFrame({'config_file': config_file_name, 'file': filepath}, index=[0])])
+                filepaths = utils.generate_filepath(data_location, batch, plate, step_parameters)
+                for filepath in filepaths:
+                    if not filepath.exists() or os.path.getsize(filepath) == 0:
+                        missing_files = pd.concat([missing_files, pd.DataFrame({'config_file': config_file_name, 'batch': batch, 'plate': plate, 'file': filepath}, index=[0])])
 
 if missing_files.shape[0] == 0:
     print("All files are present. Output file was not created.")
 else:
     if not pathlib.Path(output_location).exists():
         os.mkdir(output_location)
-    missing_files[['config_file', 'file']].to_csv(f'{output_location}/missing_or_empty_files.csv', index=False)
+    missing_files[['config_file', 'batch', 'plate', 'file']].to_csv(f'{output_location}/missing_or_empty_files.csv', index=False)
