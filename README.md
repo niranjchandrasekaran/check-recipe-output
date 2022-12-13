@@ -24,7 +24,7 @@ The code requires two inputs
 
 
 ```bash
-python check-recipe-output --location <LOCATION OF THE DATA REPO> --output <LOCATION OF THE OUTPUT FOLDER>
+python check-recipe-output.py --location <LOCATION OF THE DATA REPO> --output <LOCATION OF THE OUTPUT FOLDER>
 ```
 
 The script creates a folder called `output` and writes the names of missing and empty files to `output/missing_or_emtpy_files.csv`. If there are no missing or empty files, the code exits after printing the following message.
