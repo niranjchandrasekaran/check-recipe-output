@@ -14,6 +14,7 @@ Download and install [miniconda](https://docs.conda.io/en/latest/miniconda.html)
 
 ```bash
 conda env create --force --file environment.yml
+conda activate check-recipe-output
 ```
 
 ## Running the script
